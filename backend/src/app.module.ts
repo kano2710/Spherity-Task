@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { CryptographyService } from './cryptography/cryptography.service';
 import { CryptographyModule } from './cryptography/cryptography.module';
 import { ConfigModule } from '@nestjs/config';
+import { StorageService } from './storage/storage.service';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -11,9 +13,10 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    CryptographyModule
+    CryptographyModule,
+    StorageModule
   ],
   controllers: [AppController],
-  providers: [AppService, CryptographyService],
+  providers: [AppService, CryptographyService, StorageService],
 })
 export class AppModule { }
