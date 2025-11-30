@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import CredentialsList from './components/CredentialsList'
+import CredentialDetail from './components/CredentialDetail'
+import VerifyCredential from './components/VerifyCredential'
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (
+        <BrowserRouter>
+            <div className="min-h-screen bg-gray-50">
+                <nav className="bg-white border-b border-gray-200 mb-8">
+                    <div className="container mx-auto px-6 py-4">
+                        <div className="flex justify-between items-center">
+                            <Link to="/" className="text-2xl font-bold text-gray-800">
+                                Verifiable Credential Wallet
+                            </Link>
+                            <div className="flex gap-6 items-center">
+                                <div className="flex gap-4">
+                                    <Link to="/" className="text-gray-600 hover:text-gray-900">
+                                        Credentials
+                                    </Link>
+                                    <Link to="/verify" className="text-gray-600 hover:text-gray-900">
+                                        Verify
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+                <Routes>
+                    <Route path="/" element={<CredentialsList />} />
+                    <Route path="/credentials/:id" element={<CredentialDetail />} />
+                    <Route path="/verify" element={<VerifyCredential />} />
+                </Routes>
+            </div>
+        </BrowserRouter>
+    )
 }
 
 export default App
