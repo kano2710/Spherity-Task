@@ -111,5 +111,5 @@ A quick reference for the main features:
 Full, interactive documentation is available automatically once the server is running.
 
 ```bash
-  http://{server-ip}:{PORT}/api-docs
+  http://localhost:3000/api-docs
 ```
