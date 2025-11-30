@@ -52,7 +52,7 @@ export class CryptographyService implements OnModuleInit {
                 this.privateKey = (await importJWK(
                     JSON.parse(decryptedPrivate),
                     'EdDSA',
-                    { extractable: true },
+                    { extractable: false },
                 )) as CryptoKey;
             } else {
                 throw new Error('KEY_ENCRYPTION_PASSPHRASE not set');
@@ -67,8 +67,6 @@ export class CryptographyService implements OnModuleInit {
             const { privateKey, publicKey } = await generateKeyPair('EdDSA', {
                 extractable: true,
             });
-            this.privateKey = privateKey;
-            this.publicKey = publicKey;
 
             const privateJWK = await exportJWK(privateKey);
             const publicJWK = await exportJWK(publicKey);
@@ -84,6 +82,14 @@ export class CryptographyService implements OnModuleInit {
                     publicKeyPath,
                     JSON.stringify(publicJWK, null, 2),
                 );
+
+                this.privateKey = (await importJWK(privateJWK, 'EdDSA', {
+                    extractable: false,
+                })) as CryptoKey;
+
+                this.publicKey = (await importJWK(publicJWK, 'EdDSA', {
+                    extractable: true,
+                })) as CryptoKey;
 
                 this.logger.log('New Ed25519 keypair generated');
             } else {
