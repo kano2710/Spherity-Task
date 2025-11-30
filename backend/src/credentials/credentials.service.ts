@@ -15,15 +15,16 @@ export class CredentialsService {
     ) { }
 
     async issueCredential(createCredentialDto: CreateCredentialDto): Promise<VerifiableCredential> {
-        const { type, credentialSubject, issuer } = createCredentialDto;
+        const { type, credentialSubject, issuer, userId } = createCredentialDto;
 
         const credential: Omit<VerifiableCredential, 'proof'> = {
             '@context': ['https://www.w3.org/ns/credentials/v2'],
             id: `urn:uuid:${uuidv4()}`,
             type: ['VerifiableCredential', ...type],
             credentialSubject,
-            issuer: issuer || 'did:example:issuer',
-            issuanceDate: new Date().toISOString()
+            issuer: issuer || `did:example:${userId}`,
+            issuanceDate: new Date().toISOString(),
+            userId
         };
 
         const proof = await this.cryptographyService.signJWT({ ...credential });
@@ -37,8 +38,13 @@ export class CredentialsService {
         return verifiableCredential;
     }
 
-    async findAll(): Promise<VerifiableCredential[]> {
+    async findAll(userId?: string): Promise<VerifiableCredential[]> {
         const allCredentials = await this.storageService.findAll();
+
+        if (userId) {
+            return allCredentials.filter(cred => cred.userId === userId);
+        }
+
         return allCredentials;
     }
 
@@ -47,32 +53,32 @@ export class CredentialsService {
     }
 
     async verify(token: string): Promise<{ valid: boolean; payload?: any; error?: string; revoked?: boolean }> {
-    const result = await this.cryptographyService.verifyJWT(token);
+        const result = await this.cryptographyService.verifyJWT(token);
 
-    if (!result.valid) {
-      this.logger.warn('Credential verification failed: invalid signature');
-      return result;
+        if (!result.valid) {
+            this.logger.warn('Credential verification failed: invalid signature');
+            return result;
+        }
+
+        const credentialId = result.payload?.id;
+        if (credentialId && typeof credentialId === 'string') {
+            const isRevoked = await this.storageService.isRevoked(credentialId);
+            if (isRevoked) {
+                this.logger.warn(`Credential is revoked: ${credentialId}`);
+                return {
+                    valid: true,
+                    payload: result.payload,
+                    revoked: true,
+                    error: 'Credential has been revoked',
+                };
+            }
+        }
+        return { ...result, revoked: false };
     }
 
-    const credentialId = result.payload?.id;
-    if (credentialId && typeof credentialId === 'string') {
-      const isRevoked = await this.storageService.isRevoked(credentialId);
-      if (isRevoked) {
-        this.logger.warn(`Credential is revoked: ${credentialId}`);
-        return {
-          valid: true,
-          payload: result.payload,
-          revoked: true,
-          error: 'Credential has been revoked',
-        };
-      }
+    async remove(id: string): Promise<boolean> {
+        await this.storageService.revoke(id);
+        const deleted = await this.storageService.delete(id);
+        return deleted;
     }
-    return { ...result, revoked: false };
-  }
-
-  async remove(id: string): Promise<boolean> {
-    await this.storageService.revoke(id);
-    const deleted = await this.storageService.delete(id);
-    return deleted;
-  }
 }

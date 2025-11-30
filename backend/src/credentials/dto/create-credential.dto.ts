@@ -18,6 +18,9 @@ export class CreateCredentialDto {
   @IsOptional()
   @IsValidDID()
   issuer?: string;
+  
+  @IsString()
+  userId: string;
 }
 
 function MaxJSONSize(maxSize: number, validationOptions?: ValidationOptions) {

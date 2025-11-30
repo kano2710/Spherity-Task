@@ -6,4 +6,5 @@ export interface VerifiableCredential {
     issuer: string;
     issuanceDate: string;
     proof: string;
+    userId: string;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { CredentialsService } from './credentials.service';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { VerifyCredentialDto } from './dto/verify-credential.dto';
@@ -14,8 +14,11 @@ export class CredentialsController {
     }
 
     @Get()
-    findAll() {
-        return this.credentialsService.findAll();
+    findAll(@Query('userId') userId: string) {
+        if (!userId) {
+            throw new BadRequestException('userId query parameter is required');
+        }
+        return this.credentialsService.findAll(userId);
     }
 
     @Get(':id')

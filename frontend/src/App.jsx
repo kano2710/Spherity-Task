@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import CredentialsList from './components/CredentialsList'
 import CredentialDetail from './components/CredentialDetail'
 import VerifyCredential from './components/VerifyCredential'
+import { getDisplayUserId } from './utils/userSession'
 
 function App() {
+    const displayUserId = getDisplayUserId();
     return (
         <BrowserRouter>
             <div className="min-h-screen bg-gray-50">
@@ -21,6 +23,9 @@ function App() {
                                     <Link to="/verify" className="text-gray-600 hover:text-gray-900">
                                         Verify
                                     </Link>
+                                </div>
+                                <div className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                                    User: {displayUserId}
                                 </div>
                             </div>
                         </div>
