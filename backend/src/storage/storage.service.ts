@@ -1,17 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import fs from 'fs/promises';
 import path from 'path';
-
-interface VerifiableCredential {
-    '@context': string[];
-    id: string;
-    type: string[];
-    credentialSubject: Record<string, any>;
-    issuer: string;
-    issuanceDate: string;
-    proof: string;
-    userId: string;
-}
+import { VerifiableCredential } from '../common/interface/verifiable-credential.interface';
 
 @Injectable()
 export class StorageService implements OnModuleInit {
