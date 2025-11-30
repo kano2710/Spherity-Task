@@ -108,8 +108,4 @@ A quick reference for the main features:
 
 **Documentation (Swagger)**
 
-Full, interactive documentation is available automatically once the server is running.
-
-```bash
-  http://localhost:3000/api-docs
-```
+Full, interactive documentation is available automatically once the server is running at [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
