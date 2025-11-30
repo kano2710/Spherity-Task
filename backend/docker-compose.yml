@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vc-wallet-backend
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - PORT=3000
+      - KEY_ENCRYPTION_PASSPHRASE=${KEY_ENCRYPTION_PASSPHRASE}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+    volumes:
+      - ./data:/app/data
+      - ./keys:/app/keys
+    restart: unless-stopped
